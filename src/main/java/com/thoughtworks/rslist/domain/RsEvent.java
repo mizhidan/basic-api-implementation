@@ -4,6 +4,10 @@ public class RsEvent {
     private String eventName;
     private String keyWord;
 
+    public RsEvent(String eventName, String keyWord) {
+        this.eventName = eventName;
+        this.keyWord = keyWord;
+    }
 
     public String getKeyWord() {
         return keyWord;
