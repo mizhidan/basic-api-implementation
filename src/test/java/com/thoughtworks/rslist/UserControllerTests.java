@@ -98,13 +98,15 @@ public class UserControllerTests {
     }
 
     @Test
-    public void should_throw_method_not_valid_exception() throws Exception {
-        String jsonString = "{\"eventName\":\"猪肉涨价啦\"," +
-                "\"keyWord\":\"经济\"," +
-                "\"user\": {\"username\":\"djaaaaaaaaa\", \"gender\":\"male\",\"age\":22,\"email\":\"abc\",\"phone\":\"12345678911\"}}";
+    public void should_throw_method_invalid_user_exception() throws Exception {
+        User user = new User("aaa", "male", 27, "abc", "123456789111");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonStr = objectMapper.writeValueAsString(user);
 
-        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user").content(jsonStr).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("invalid param")));
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
+
+
 }

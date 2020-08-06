@@ -149,4 +149,17 @@ class RsListApplicationTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid request param")));
     }
+
+    @Test
+    public void should_throw_method_not_valid_exception() throws Exception {
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\"," +
+                "\"keyWord\":\"经济\"," +
+                "\"user\": {\"username\":\"djaaaaaaaaa\", \"gender\":\"male\",\"age\":22,\"email\":\"abc@abc.com\",\"phone\":\"12345678911\"}}";
+
+        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid param")));
+    }
+
+
 }
