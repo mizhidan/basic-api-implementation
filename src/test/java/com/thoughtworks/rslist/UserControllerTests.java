@@ -1,6 +1,5 @@
 package com.thoughtworks.rslist;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.UserDto;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -33,15 +31,15 @@ public class UserControllerTests {
 
     @Test
     public void should_register_user() throws Exception {
-        UserDto user = UserDto.builder().userName("dj").gender("male").age(22).email("abc@d.com").phone("12345678911").voteNum(10).build();
+        User user = new User("dj","male",22,"abc@bcd.com","12345678911");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonStr = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonStr).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
         List<UserDto> all = userRepository.findAll();
         assertEquals(1, all.size());
         assertEquals("dj", all.get(0).getUserName());
-        assertEquals("abc@bac.com", all.get(0).getEmail());
+        assertEquals("abc@bcd.com", all.get(0).getEmail());
     }
 
     @Test
