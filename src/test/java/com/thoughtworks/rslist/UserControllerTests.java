@@ -18,8 +18,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -61,13 +60,20 @@ public class UserControllerTests {
 
     @Test
     public void should_get_user_by_id() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonStr = objectMapper.writeValueAsString(userDto);
         userRepository.save(userDto);
-    mockMvc.perform(get("/user/1"))
+        mockMvc.perform(get("/user/1"))
             .andExpect(jsonPath("$.userName", is("dj")))
             .andExpect(jsonPath("$.email", is("a@b.com")));
+    }
 
+    @Test
+    public void should_delete_user_by_id() throws Exception {
+        userRepository.save(userDto);
+        UserDto userDto2 = UserDto.builder().voteNum(10).phone("12345678911").gender("male").email("a@b.com").age(22)
+                        .userName("dj").build();
+        userRepository.save(userDto2);
+        mockMvc.perform(delete("/user/1")).andExpect(status().isOk());
+        assertEquals(1,userRepository.findAll().size());
     }
 
     @Test

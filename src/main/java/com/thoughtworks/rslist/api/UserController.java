@@ -48,4 +48,10 @@ public class UserController {
         userDtoList = userRepository.findAll();
         return ResponseEntity.ok().body(userDtoList.get(index - 1));
     }
+
+    @DeleteMapping("/user/{index}")
+    public ResponseEntity deleteUserById(@PathVariable int index) {
+        userRepository.deleteById(index);
+        return ResponseEntity.ok().build();
+    }
 }
