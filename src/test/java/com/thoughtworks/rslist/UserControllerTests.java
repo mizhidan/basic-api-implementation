@@ -1,9 +1,11 @@
 package com.thoughtworks.rslist;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,8 +20,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -28,6 +29,22 @@ public class UserControllerTests {
     MockMvc mockMvc;
     @Autowired
     UserRepository userRepository;
+    private UserDto userDto;
+
+    @BeforeEach
+    void setUp() {
+
+        userRepository.deleteAll();
+        userDto =
+                UserDto.builder()
+                        .voteNum(10)
+                        .phone("12345678911")
+                        .gender("male")
+                        .email("a@b.com")
+                        .age(22)
+                        .userName("dj")
+                        .build();
+    }
 
     @Test
     public void should_register_user() throws Exception {
@@ -40,6 +57,17 @@ public class UserControllerTests {
         assertEquals(1, all.size());
         assertEquals("dj", all.get(0).getUserName());
         assertEquals("abc@bcd.com", all.get(0).getEmail());
+    }
+
+    @Test
+    public void should_get_user_by_id() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonStr = objectMapper.writeValueAsString(userDto);
+        userRepository.save(userDto);
+    mockMvc.perform(get("/user/1"))
+            .andExpect(jsonPath("$.userName", is("dj")))
+            .andExpect(jsonPath("$.email", is("a@b.com")));
+
     }
 
     @Test

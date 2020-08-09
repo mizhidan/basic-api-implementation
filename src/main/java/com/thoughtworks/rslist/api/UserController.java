@@ -20,6 +20,7 @@ public class UserController {
         return userList;
     }
     private static List<User> userList = new ArrayList<>();
+    private static List<UserDto> userDtoList = new ArrayList<>();
 
     public void initUserList() {
         userList.add(new User("dj", "male", 22, "abc@bac.com", "12345678911"));
@@ -36,8 +37,15 @@ public class UserController {
         userRepository.save(userDto);
     }
 
+
     @GetMapping("/user/list")
     public ResponseEntity getMappingUserList() {
-        return ResponseEntity.ok(userList);
+        return ResponseEntity.ok().body(userList);
+    }
+
+    @GetMapping("/user/{index}")
+    public ResponseEntity getUserById(@PathVariable int index) {
+        userDtoList = userRepository.findAll();
+        return ResponseEntity.ok().body(userDtoList.get(index - 1));
     }
 }
